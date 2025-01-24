@@ -107,7 +107,7 @@ namespace app {
             dog_move = model::Move::STAND;
         }
         else {
-            throw std::invalid_argument;
+            throw std::invalid_argument("Invalid argument");
         }
         session_->MoveDog(dog_->GetId(), dog_move);    
     }
