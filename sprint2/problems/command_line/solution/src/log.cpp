@@ -16,7 +16,7 @@ namespace server_logging {
     namespace keywords = boost::log::keywords;
     namespace sinks = boost::log::sinks;
 
-    BOOST_LOG_ATTRIBUTE_KEYWORD(line_id, "LineID", unsigned int)
+    BOOST_LOG_ATTRIBUTE_KEYWORD(line_id, "LineID", uint32_t)
     BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp, "TimeStamp", boost::posix_time::ptime)
     BOOST_LOG_ATTRIBUTE_KEYWORD(file, "File", std::string)
     BOOST_LOG_ATTRIBUTE_KEYWORD(line, "Line", int)
@@ -49,8 +49,8 @@ namespace server_logging {
         );
     }
 
-    void Log::Info(std::string_view data_, std::string_view message_) {
-        BOOST_LOG_TRIVIAL(info) << logging::add_value(data, data_) << logging::add_value(msg, message_);
+    void Log::Info(std::string_view log_data, std::string_view log_message) {
+        BOOST_LOG_TRIVIAL(info) << logging::add_value(data, log_data) << logging::add_value(msg, log_message);
     }
 
     void Server::Start(std::string_view address, int port) {
@@ -60,12 +60,12 @@ namespace server_logging {
         log_.Info(serialize(mapEl), "server started"sv);
     }
 
-    void Server::End(const boost::system::error_code& err) {
+    void Server::End(const boost::system::error_code& ec) {
         json::object mapEl;
-        mapEl["code"] = err.value();
+        mapEl["code"] = ec.value();
     
-        if (err) {
-            mapEl["exception"] = err.what();
+        if (ec) {
+            mapEl["exception"] = ec.what();
         }
         log_.Info(serialize(mapEl), "server exited"sv);
     }
@@ -102,7 +102,7 @@ namespace server_logging {
         log_.Info(serialize(mapEl), "request received"sv);
     }
 
-    void Server::Response(long long response_time, unsigned status_code, std::string_view content_type) {
+    void Server::Response(int64_t response_time, uint64_t status_code, std::string_view content_type) {
         json::object mapEl;
         mapEl["response_time"] = response_time;
         mapEl["code"] = status_code;

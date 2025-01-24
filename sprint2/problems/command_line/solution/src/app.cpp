@@ -19,7 +19,7 @@ namespace app {
         return boost::string_view(str.data(), str.size());
     };
 
-    std::string ModelToJson::GetMaps() {
+    std::string ModelToJson::GetMaps() const {
         const auto& maps = game_.GetMaps();
         js::array obj;
         for (auto& map : maps) {
@@ -31,7 +31,7 @@ namespace app {
         return serialize(obj);
     }
 
-    std::string ModelToJson::GetMap(std::string_view nameMap) {
+    std::string ModelToJson::GetMap(std::string_view nameMap) const {
         model::Map::Id idmap{nameMap.data()};
         js::object mapEl;
         if (auto map = game_.FindMap({ idmap }); map != nullptr) {
@@ -103,8 +103,11 @@ namespace app {
         else if (move_cmd == "D"sv) {
             dog_move = model::Move::DOWN;
         }
-        else {
+        else if (move_cmd == ""sv) {
             dog_move = model::Move::STAND;
+        }
+        else {
+            throw std::invalid_argument("Invalid argument");
         }
         session_->MoveDog(dog_->GetId(), dog_move);    
     }
@@ -122,7 +125,7 @@ namespace app {
         return token;
     }
 
-    std::string PlayerTokens::ToHex(uint64_t n) const {
+    std::string ToHex(uint64_t n) {
         std::string hex;
         while (n > 0) {
             int r = n % 16;
@@ -155,7 +158,6 @@ namespace app {
         auto parseError = std::make_pair(JsonMessage("invalidArgument"sv, "Join game request parse error"sv), JoinError::BadJson);
         js::error_code ec;
         js::string_view jb{jsonBody.data(), jsonBody.size()};
-        std::string resp;
         std::string userName;
         std::string mapId;
         js::value const jv = js::parse(jb, ec);
@@ -196,12 +198,13 @@ namespace app {
         try {
             js::value const jv = js::parse(to_booststr(jsonBody));
             move = jv.at("move").as_string();
+            Player* player = player_tokens_.FindPlayer(token);
+            player->Move(move);
         }
-        catch (...) {
+        catch (const std::exception&) {
             return std::make_pair(JsonMessage("invalidArgument"sv, "Failed to parse action"sv), error_code::InvalidArgument);
-        }    
-        Player* player = player_tokens_.FindPlayer(token);
-        player->Move(move);
+        }
+        
         js::object msg;
         return std::make_pair(std::move(serialize(msg)), error_code::None);
     }
@@ -226,9 +229,9 @@ namespace app {
             }
             time_delta_mc = std::chrono::milliseconds(mc);
         }
-        catch (...) {
+        catch (const std::exception&) {
             return std::make_pair(JsonMessage("invalidArgument"sv, "Failed to parse tick request JSON"sv), error_code::InvalidArgument);
-        }    
+        }
         game_.Tick(time_delta_mc);
         js::object msg;
         return std::make_pair(std::move(serialize(msg)), error_code::None);
@@ -322,14 +325,18 @@ namespace app {
         }
         return nullptr;
     }
+
     const Player::Id* Players::FindPlayerId(std::string_view player_name) const noexcept {
-        for (const auto& player : players_) {
-            if (player->GetName() == player_name) {
-                return &player->GetId();
+        auto it = std::find_if(players_.begin(), players_.end(), [&](const auto& player) {
+                return player->GetName() == player_name;
             }
+        );
+        if (it != players_.end()) {
+            return &(*it)->GetId();
         }
         return nullptr;
     }
+
     Player* Players::FindPlayer(Player::Id player_id) const noexcept {
         if (auto it = player_id_to_index_.find(player_id); it != player_id_to_index_.end()) {
             auto pl = players_.at(it->second).get();

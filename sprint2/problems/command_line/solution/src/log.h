@@ -29,7 +29,7 @@ namespace server_logging {
             static Log obj;
             return obj;
         }
-        static void Info(std::string_view data, std::string_view message);
+        static void Info(std::string_view log_data, std::string_view log_message);
 
         template <typename ConstBufferSequence>
         size_t WriteSome(const ConstBufferSequence& cbs, sys::error_code& ec) {
@@ -86,8 +86,8 @@ namespace server_logging {
         void End(const sys::error_code& ec);
         void Error(const sys::error_code& ec, Where where);
         void Request(std::string_view address, std::string_view uri, std::string_view method);
-        void Msg(std::string_view address, std::string_view uri);
-        void Response(long long response_time, unsigned status_code, std::string_view content_type);
+        void Response(int64_t response_time, uint64_t status_code, std::string_view content_type);
+        void Msg(std::string_view header, std::string_view message);
     };
 
     template<class SomeRequestHandler>
