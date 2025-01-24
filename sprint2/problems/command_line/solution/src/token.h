@@ -30,8 +30,11 @@ namespace security {
         }
         size_t begin = bearer.size();
         size_t end = autorization_text.size() - 1;
-        for (; end > begin && autorization_text[end] == ' '; end--);
-        std::string_view out = autorization_text.substr(begin, end);
+        end = std::find_if_not(autorization_text.begin() + begin, autorization_text.begin() + end, [](char c) {
+                return c == ' ';
+            }
+        ) - autorization_text.begin();
+        std::string_view out = autorization_text.substr(begin, end - begin);
         if (out.size() != ex_token.size()) {
             return nullstr;
         }

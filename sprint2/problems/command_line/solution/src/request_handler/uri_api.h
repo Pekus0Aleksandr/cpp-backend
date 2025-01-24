@@ -138,7 +138,7 @@ namespace uri_api {
             std::string target = http_server::uriDecode(req.target());
             auto stop = target.find('?');
             target = std::string(target.substr(0, stop));
-            if (target.find(Endpoint::MAPS) == 0) {
+            if (target.starts_with(Endpoint::MAPS)) {
                 target = std::string{ Endpoint::MAPS };
             }
             auto it = data_.find(target);

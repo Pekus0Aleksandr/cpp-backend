@@ -238,9 +238,9 @@ namespace model {
         const Map* map_;
         const bool randomize_spawn_points_ = true;
         RoadMap road_map;
-        DPoint GetRandomRoadCoord();
+        DPoint GetRandomRoadCoord() const;
         void LoadRoadMap();
-        bool PosInRoads(RoadMapIter roads, DPoint pos);
+        static bool PosInRoads(RoadMapIter roads, DPoint pos);
         DPoint GetExtremePos(RoadMapIter roads, DPoint pos);
         DPoint MoveDog(DPoint start_pos, DPoint end_pos);
     };

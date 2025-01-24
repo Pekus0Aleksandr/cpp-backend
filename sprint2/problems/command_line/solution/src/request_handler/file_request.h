@@ -19,12 +19,12 @@ namespace http_handler {
 
 	private: 
 		TypeRequest ParseTarget(std::string_view target, std::string& res) const;
-		virtual FileRequestResult MakeGetResponse(const StringRequest& req, bool with_body) const override;
-		virtual FileRequestResult MakePostResponse(const StringRequest& req) const override;
-		virtual FileRequestResult MakeOptionsResponse(const StringRequest& req) const override;
-		virtual FileRequestResult MakePutResponse(const StringRequest& req) const override;
-		virtual FileRequestResult MakePatchResponse(const StringRequest& req) const override;
-		virtual FileRequestResult MakeDeleteResponse(const StringRequest& req) const override;
+		FileRequestResult MakeGetResponse(const StringRequest& req, bool with_body) const override;
+		FileRequestResult MakePostResponse(const StringRequest& req) const override;
+		FileRequestResult MakeOptionsResponse(const StringRequest& req) const override;
+		FileRequestResult MakePutResponse(const StringRequest& req) const override;
+		FileRequestResult MakePatchResponse(const StringRequest& req) const override;
+		FileRequestResult MakeDeleteResponse(const StringRequest& req) const override;
 		static fs::path CheckStaticPath(const fs::path& path_static);
 		FileRequestResult StaticFilesResponse(std::string_view responseText, bool with_body,
 											  unsigned http_version, bool keep_alive) const;

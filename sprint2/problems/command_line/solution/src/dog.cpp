@@ -1,6 +1,4 @@
-#include "model.h"
-
-#include <stdexcept>
+#include "dog.h"
 
 std::atomic<uint64_t> model::Dog::idn = 0;
 model::DSpeed model::Dog::zero_speed_ = DSpeed{0.0, 0.0};  
@@ -52,7 +50,7 @@ namespace model {
     DPoint Dog::GetEndPoint(std::chrono::milliseconds move_time_ms) {
         auto msChronoToDoubleSec = [] (auto ms) {
             static constexpr double to_sec = 1000.0;
-            return double(ms.count()) / to_sec;
+            return static_cast<double>(ms.count()) / to_sec;
         };
         if (IsStanding()) {
             return coord_;

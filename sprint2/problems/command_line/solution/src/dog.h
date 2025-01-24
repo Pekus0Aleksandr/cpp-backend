@@ -1,5 +1,6 @@
 #pragma once 
 #include "sdk.h"
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -47,20 +48,21 @@ namespace model {
     class Dog {
     public:
         using Id = util::Tagged<uint64_t, Dog>;
-        Dog(std::string_view nickname, const DPoint& coord) 
-            : nickname_(nickname.data()
-            , nickname.size())
-            , id_(Id{ idn++ })
-            , coord_(coord){
+        Dog(std::string_view nickname, const DPoint& coord)
+            : id_(Id{ idn++ })
+            , nickname_(nickname.data(), nickname.size())
+            , coord_(coord)
+            , speed_(zero_speed_)
+            , dir_(Direction::NORTH) {
         }
-        Dog(const Dog& other) 
+        Dog(const Dog& other)
             : id_(other.id_)
-            , nickname_(other.nickname_),
-            coord_(other.coord_)
+            , nickname_(other.nickname_)
+            , coord_(other.coord_)
             , speed_(other.speed_)
             , dir_(other.dir_) {
         }
-        Dog(Dog&& other) noexcept 
+        Dog(Dog&& other) noexcept
             : id_(std::move(other.id_))
             , nickname_(std::move(other.nickname_))
             , coord_(std::move(other.coord_))
@@ -85,7 +87,7 @@ namespace model {
         void SetPoint(DPoint coord) {
             coord_ = coord;
         }
-        bool IsStanding() {
+        bool IsStanding() const {
             return speed_ == zero_speed_;
         }
         void Stop() {

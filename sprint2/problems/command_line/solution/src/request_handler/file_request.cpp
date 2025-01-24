@@ -79,7 +79,7 @@ namespace http_handler {
             res.body() = std::move(file);
         }
         res.prepare_payload();
-        return std::move(res);
+        return res;
     }
 
 

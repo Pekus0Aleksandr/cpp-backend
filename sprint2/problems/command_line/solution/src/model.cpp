@@ -97,7 +97,7 @@ namespace model {
         return nullptr;
     }
 
-    DPoint GameSession::GetRandomRoadCoord() {
+    DPoint GameSession::GetRandomRoadCoord() const {
         std::time_t now = std::time(0);
         boost::random::mt19937 gen{static_cast<std::uint32_t>(now)};
         auto random_double = [&](auto x1, auto x2) {

@@ -32,8 +32,8 @@ namespace app {
     public:
         explicit ModelToJson(model::Game& game) : game_{ game } {}
 
-        std::string GetMaps();
-        std::string GetMap(std::string_view nameMap);
+        std::string GetMaps() const;
+        std::string GetMap(std::string_view nameMap) const;
     private:
         model::Game& game_;
         static js::array GetRoads(const model::Map::Roads& roads);
@@ -42,6 +42,7 @@ namespace app {
     };
 
     std::string JsonMessage(std::string_view code, std::string_view message);
+    std::string ToHex(uint64_t n);
 
     class Player {
     public:
@@ -90,9 +91,7 @@ namespace app {
             std::string r2 = ToHex(generator2_());
             return r1 + r2;
         }
-        std::string ToHex(uint64_t n) const;
     };
-
 
     class Players {
     public:
