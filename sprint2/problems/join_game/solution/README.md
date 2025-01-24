@@ -10,17 +10,17 @@
 
 Вот пример конфигурирования для Release и Debug:
 ```
-# mkdir -p build-release 
-# cd build-release
-# conan install .. --build=missing -s build_type=Release -s compiler.libcxx=libstdc++11
-# cmake .. -DCMAKE_BUILD_TYPE=Release
-# cd ..
+mkdir -p build-release
+cd build-release
+conan install .. --build=missing -s build_type=Release -s compiler.libcxx=libstdc++11
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cd ..
 
-# mkdir -p build-debug
-# cd build-debug
-# conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libstdc++11
-# cmake .. -DCMAKE_BUILD_TYPE=Debug
-# cd ..
+mkdir -p build-debug
+cd build-debug
+conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libstdc++11
+cmake .. -DCMAKE_BUILD_TYPE=Debug
+cd ..
 
 ```
 
@@ -33,13 +33,21 @@
 После этого можно запустить подобный снипет:
 
 ```
-# mkdir build 
-# cd build
-# conan install .. --build=missing -s build_type=Debug
-# conan install .. --build=missing -s build_type=Release
-# conan install .. --build=missing -s build_type=RelWithDebInfo
-# conan install .. --build=missing -s build_type=MinSizeRel
-# cmake ..
+mkdir build 
+cd build
+conan install .. --build=missing -s build_type=Debug
+conan install .. --build=missing -s build_type=Release
+conan install .. --build=missing -s build_type=RelWithDebInfo
+conan install .. --build=missing -s build_type=MinSizeRel
+cmake ..
+```
+
+Последовательность заработала на винде
+```
+mkdir build_debug && cd build_debug
+conan install .. --build=missing -s build_type=Debug
+cmake ..
+cmake --build .
 ```
 
 В таком случае будут собираться все конфигурации (что не быстро). Можно сэкономить время, оставив только нужные.
